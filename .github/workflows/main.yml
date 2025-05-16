@@ -24,10 +24,9 @@ jobs:
         working-directory: simple-api
         run: mvn clean verify
 
-      - name: SonarCloud Scan
+      - name: Analyse SonarCloud
         working-directory: simple-api
-        run: mvn -B verify sonar:sonar -Dsonar.projectKey=simple-api-ali -Dsonar.organization=alinahas1311 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
+        run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alinahas1311_devopsTD2 -Dsonar.organization=alinahas1311 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   build-and-push-docker-image:
     needs: test-backend
