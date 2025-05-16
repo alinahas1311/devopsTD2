@@ -20,13 +20,24 @@ jobs:
           distribution: temurin
           java-version: '21'
 
+      # Variante A : avec working-directory
       - name: Build and test with Maven
         working-directory: simple-api
         run: mvn clean verify
 
+      # Variante B : avec --file
+      # - name: Build and test with Maven
+      #   run: mvn clean verify --file=./simple-api/pom.xml
+
       - name: Analyse SonarCloud
         working-directory: simple-api
-        run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=alinahas1311_devopsTD2 -Dsonar.organization=alinahas1311 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn verify \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+            -Dsonar.projectKey=alinahas1311_devopsTD2 \
+            -Dsonar.organization=alinahas1311 \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   build-and-push-docker-image:
     needs: test-backend
@@ -37,7 +48,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to DockerHub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" \
+          | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build and push backend image
         uses: docker/build-push-action@v6
