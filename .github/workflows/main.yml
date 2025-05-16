@@ -24,8 +24,17 @@ jobs:
         working-directory: simple-api
         run: mvn clean verify
 
+      - name: SonarCloud Scan
+        run: mvn -B verify sonar:sonar \
+          -Dsonar.projectKey=alinahas1311_devopsTD2 \
+          -Dsonar.organization=alinahas1311 \
+          -Dsonar.host.url=https://sonarcloud.io \
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+          --file ./simple-api/pom.xml
+
   build-and-push-docker-image:
     needs: test-backend
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
@@ -34,23 +43,23 @@ jobs:
       - name: Login to DockerHub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-      - name: Build image and push backend
+      - name: Build and push backend image
         uses: docker/build-push-action@v6
         with:
           context: ./simple-api
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
 
-      - name: Build image and push database
+      - name: Build and push database image
         uses: docker/build-push-action@v6
         with:
           context: ./database
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
 
-      - name: Build image and push httpd
+      - name: Build and push http-server image
         uses: docker/build-push-action@v6
         with:
           context: ./http-server
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: true
