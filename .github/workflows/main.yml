@@ -26,7 +26,7 @@ jobs:
 
       - name: SonarCloud Scan
         working-directory: simple-api
-        run: mvn -B verify sonar:sonar \
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=ton-project-key -Dsonar.organization=alinahas1311 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
           -Dsonar.projectKey=ton-project-key \
           -Dsonar.organization=alinahas1311 \
           -Dsonar.host.url=https://sonarcloud.io \
