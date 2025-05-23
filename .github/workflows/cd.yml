@@ -35,9 +35,6 @@ jobs:
 
           echo "New version: $NEW_VERSION"
 
-          # Replace in pom.xml
-          sed -i "s/<version>$CURRENT_VERSION<\/version>/<version>$NEW_VERSION<\/version>/" $FILE
-
           echo "IMAGE_TAG=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Login to DockerHub

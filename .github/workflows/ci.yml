@@ -31,3 +31,10 @@ jobs:
             -Dsonar.organization=alinahas1311 \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
+      - name: Alerte en cas d'échec des tests (rollback info)
+        if: failure()
+        run: |
+          echo "❌ Les tests ont échoué pour le commit $GITHUB_SHA"
+          echo "🛑 Le commit doit être corrigé ou reverté manuellement."
+          echo "💡 Conseil : ouvrez une issue ou faites un git revert."
