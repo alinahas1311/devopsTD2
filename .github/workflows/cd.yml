@@ -15,8 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set image tag (incremental version)
-        run: echo "IMAGE_TAG=v${GITHUB_RUN_NUMBER}" >> $GITHUB_ENV
+      - name: Extract version from pom.xml
+        working-directory: ./simple-api
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "IMAGE_TAG=$VERSION" >> $GITHUB_ENV
 
       - name: Login to DockerHub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
