@@ -1,0 +1,44 @@
+# .github/workflows/cd.yml
+name: CD docker push
+
+on:
+  workflow_run:
+    workflows: ["CI devops 2025"]
+    types:
+      - completed
+
+jobs:
+  build-and-push:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" \
+          | docker login --username ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./simple-api
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:${{ env.IMAGE_TAG }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push database image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./database
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:${{ env.IMAGE_TAG }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push http-server image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./http-server
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http:${{ env.IMAGE_TAG }}
+          push: ${{ github.ref == 'refs/heads/main' }}
