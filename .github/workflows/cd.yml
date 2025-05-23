@@ -63,3 +63,14 @@ jobs:
           context: ./http-server
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http:${{ env.IMAGE_TAG }}
           push: ${{ github.ref == 'refs/heads/main' }}
+      
+      - name: Commit and push updated pom.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add ./simple-api/pom.xml
+          git commit -m "ci: bump version to ${{ env.IMAGE_TAG }}" || echo "No changes to commit"
+          git push origin main
+
