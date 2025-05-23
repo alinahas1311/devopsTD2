@@ -25,25 +25,19 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./simple-api
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:${{ env.IMAGE_TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:${{ env.IMAGE_TAG }}
           push: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build and push database image
         uses: docker/build-push-action@v6
         with:
           context: ./database
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:${{ env.IMAGE_TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:${{ env.IMAGE_TAG }}
           push: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build and push http-server image
         uses: docker/build-push-action@v6
         with:
           context: ./http-server
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http:${{ env.IMAGE_TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http:${{ env.IMAGE_TAG }}
           push: ${{ github.ref == 'refs/heads/main' }}
